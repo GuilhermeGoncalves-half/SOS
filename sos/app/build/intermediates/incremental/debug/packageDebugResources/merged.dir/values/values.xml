@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">SOS</string>
+    <string name="config">Configurações</string>
+    <string name="contact"> Contato </string>
+    <string name="content_description_icon_config">Simbolo da engrenagem que representa as configurações do app</string>
+    <string name="hint_config">
+        Cadastre uma pessoa que será avisada rapidamente em caso de emergência.
+        Ela receberá a sua mensagem e
+        localização por SMS quando o botão de pânico for acionado.
+    </string>
+    <string name="hint_contact_name">Nome do contato</string>
+    <string name="hint_contact_phone">Celular do contato</string>
+    <string name="hint_custom_message">Mensagem personalizada</string>
+    <string name="hint_main"> Após tocar no botão acima, uma mensagem de texto será enviada para contato de sua confiança(cadastrado no aplicativo). </string>
+    <style name="Base.Theme.Sos" parent="Theme.Material3.DayNight.NoActionBar">
+        
+        
+        <item name="colorPrimary">#F44336</item>
+        <item name="colorPrimaryDark">#D32F2F</item>
+    </style>
+    <style name="Theme.Sos" parent="Base.Theme.Sos"/>
+</resources>
