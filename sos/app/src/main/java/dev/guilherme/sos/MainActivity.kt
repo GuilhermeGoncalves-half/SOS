@@ -1,6 +1,6 @@
 package dev.guilherme.sos
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -14,12 +14,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import android.Manifest
+import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var textContactInfo: TextView
     private lateinit var sharedPreferences: SharedPreferences
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -33,7 +39,10 @@ class MainActivity : AppCompatActivity() {
         //Inicializando o serviço SharedPreferences
         sharedPreferences = getSharedPreferences("soccoro", MODE_PRIVATE)
 
-        //ligação entre o jotlin e o XMl
+        //Inicializando o serviço de localização
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        //ligação entre o kotlin e o XMl
         textContactInfo = findViewById(R.id.textContactInfo)
 
         // ========= botão config ===========
@@ -43,14 +52,15 @@ class MainActivity : AppCompatActivity() {
 
         // ========= botão sos =======
         findViewById<Button>(R.id.buttonSos).setOnClickListener{
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED){
 
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 0)
+            if(checkAndRequest(Manifest.permission.ACCESS_FINE_LOCATION)){
+                //obter a localização
+                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                    Toast.makeText(this, "LAT: ${location.latitude} | LONG:${location.longitude}", Toast.LENGTH_LONG).show()
+                }
+            }//fim do if
 
-            } else {
 
-            }
         }
     }//fim do OnCreate
 
@@ -63,7 +73,8 @@ class MainActivity : AppCompatActivity() {
         val contactName = sharedPreferences.getString("contactName", null)
         val contactPhone = sharedPreferences.getString("contactPhone", null)
         textContactInfo.setText("$contactName | $contactPhone")
-    }
+    }//fim do displayContactInfo
+
 
     private fun initSetup(){
         //verificar se a propriedade "contactPhone" existe
@@ -86,5 +97,15 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }//fim do openConfigActivity
+
+    private fun checkAndRequest(permission: String): Boolean{
+        if (ActivityCompat.checkSelfPermission(this, permission)
+            != PackageManager.PERMISSION_GRANTED){
+
+            ActivityCompat.requestPermissions(this, arrayOf(permission), 0)
+            return false
+        }
+        return true
+    }//fim do checkAndRequest
 
 }//fim da classe
